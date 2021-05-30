@@ -1,5 +1,5 @@
 # PRA2-Titanic-Data
-Data Analisis based on Wikipedia Titanic Data
+Data Analisis based on Wikipedia Titanic Data - 
 Anàlisi de dades del viatge inaugural del Titanic
 
 Ens hem basat en dos URL
