@@ -5,6 +5,7 @@ Anàlisi de dades del viatge inaugural del Titanic
 Ens hem basat en dos URL
 
 https://en.wikipedia.org/wiki/Passengers_of_the_Titanic
+
 https://en.wikipedia.org/wiki/Crew_of_the_Titanic
 
 El fitxer resultant d'ajuntar per nosaltres 11 taules, all_Titanic.xlsx, ha sigut revisat amb Python en CleaningTitanic.ipynb, que adjuntem.
