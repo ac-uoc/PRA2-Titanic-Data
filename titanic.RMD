@@ -1,0 +1,388 @@
+---
+title: 'Tipologia i cicle de vida de les dades: Pràctica 2'
+author: "Autors: Alexandre Casanovas / Antonio Nogueras"
+date: "Juny 2021"
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+    includes:
+  word_document: default
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***Càrrega del fitxer***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+Titanic <- read.csv("all_Titanic.csv",stringsAsFactors = FALSE, sep=';',fileEncoding = "WINDOWS-1252")
+head(Titanic)
+```
+
+***Neteja de les dades***
+
+***Duplicats***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+anyDuplicated(Titanic$Name)
+anyDuplicated(Titanic)
+duplicated_name <- data.frame(table(Titanic$Name))
+duplicated_name[duplicated_name$Freq > 1,]
+#Creem columna ID per tenir una columna unique ja que la columna Name no ho és
+Titanic$ID <- seq.int(nrow(Titanic))
+Titanic <- Titanic[,c("ID","Name","Age","Boarded","Position","Lifeboat","Body","Sex","Class","Group")]
+head(Titanic)
+summary(Titanic$Age)
+```
+
+***Correcció de caràcters extranys a Name***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Eliminem el que hi ha entre [] a Name
+I <- grep("\\[*]",Titanic$Name)
+Titanic$Name[I] <- gsub("\\[\\d{2}\\]","",Titanic$Name[I])
+head(Titanic)
+```
+
+***Valors nulls i valors incorrectes***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+nrow(Titanic)
+length(Titanic$Name[Titanic$Name == ""])
+sum(is.na(Titanic$Name))
+length(Titanic$Age[Titanic$Age == ""])
+sum(is.na(Titanic$Age))
+table(Titanic$Age)
+length(Titanic$Boarded[Titanic$Boarded == ""])
+sum(is.na(Titanic$Boarded))
+table(Titanic$Boarded)
+length(Titanic$Position[Titanic$Position == ""])
+sum(is.na(Titanic$Position))
+table(Titanic$Position)
+length(Titanic$Lifeboat[Titanic$Lifeboat == ""])
+sum(is.na(Titanic$Lifeboat))
+table(Titanic$Lifeboat)
+length(Titanic$Body[Titanic$Body == ""])
+sum(is.na(Titanic$Body))
+length(Titanic$Sex[Titanic$Sex == ""])
+sum(is.na(Titanic$Sex))
+table(Titanic$Sex)
+length(Titanic$Class[Titanic$Class == ""])
+sum(is.na(Titanic$Class))
+table(Titanic$Class)
+length(Titanic$Group[Titanic$Group == ""])
+sum(is.na(Titanic$Group))
+table(Titanic$Group)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Name no te nulls
+#Age te nulls, eliminem els registres, i valors amb decimals, que també els eliminem
+nrow(Titanic)
+Titanic <- Titanic[Titanic$Age != "",]
+nrow(Titanic)
+Titanic$Age <- as.integer(Titanic$Age)
+#Tots els valors no integer són NA, els eliminem
+sum(is.na(Titanic$Age))
+Titanic <- Titanic[!is.na(Titanic$Age),]
+nrow(Titanic)
+#Eliminem els valors vuits de Boarded
+Titanic <- Titanic[Titanic$Boarded != "",]
+nrow(Titanic)
+#Position no te nulls
+#Lifeboat ens indica la barca de salvament a la que pujem els supervivents, per tant els camps nulls ens indiquen que no van sobreviure mentre que els que pujen a una barca si, anem a crear una nova variable SURVIVED, 0 si no sobreviuen 1 si sobreviuen.
+Titanic$Survived[Titanic$Lifeboat != ""] <- 1
+Titanic$Survived[Titanic$Lifeboat == ""] <- 0
+table(Titanic$Survived)
+#Fem el mateix amb Body, en quest cas sobre la mateixa variable.
+Titanic$Body[Titanic$Body != ""] <- 1
+Titanic$Body[Titanic$Body == ""] <- 0
+table(Titanic$Body)
+#Sex no te nulls
+#Eliminem nulls a Class
+Titanic <- Titanic[Titanic$Class != "",]
+Titanic <- Titanic[!is.na(Titanic$Class),]
+nrow(Titanic)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+str(Titanic)
+summary(Titanic)
+```
+
+***Busquem outliers sobre Age***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+summary(Titanic$Age)
+boxplot(Titanic$Age,main="Box plot", col="gray")
+```
+La mitjana d'edat està a 30.09 i el mínim en 1 i el màxim en 74.
+El rang interquartil està entre 22 i 37 anys, amb el que el gràfic deixa com a outliers totes les edats per sonre de 60 anys.
+A la realitat savem que aixó no és cert, no són edats fora de el normal, simplement que la mitjana d'edat és baixa, el normal en un viatge amb baixell tan llarg pels principis de segle XX.
+
+***Categoritzem la variable Age***
+
+Anem a categoritzar la variable Age, entre Adults i Menors, considerant els segons com els menors de 15 anys
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ma = max(Titanic$Age)
+mi = min(Titanic$Age)
+Titanic$Adult <-cut(Titanic$Age, breaks = c(mi,14,ma),include.lowest = TRUE,labels = c(0,1))
+summary(Titanic$Adult)
+```
+
+***Per últim anem a crear variables acumulatives***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+Titanic$cClass0[Titanic$Class == 0] <- 1
+Titanic$cClass0[Titanic$Class == 1] <- 0
+Titanic$cClass0[Titanic$Class == 2] <- 0
+Titanic$cClass0[Titanic$Class == 3] <- 0
+Titanic$cClass1[Titanic$Class == 0] <- 0
+Titanic$cClass1[Titanic$Class == 1] <- 1
+Titanic$cClass1[Titanic$Class == 2] <- 0
+Titanic$cClass1[Titanic$Class == 3] <- 0
+Titanic$cClass2[Titanic$Class == 0] <- 0
+Titanic$cClass2[Titanic$Class == 1] <- 0
+Titanic$cClass2[Titanic$Class == 2] <- 1
+Titanic$cClass2[Titanic$Class == 3] <- 0
+Titanic$cClass3[Titanic$Class == 0] <- 0
+Titanic$cClass3[Titanic$Class == 1] <- 0
+Titanic$cClass3[Titanic$Class == 2] <- 0
+Titanic$cClass3[Titanic$Class == 3] <- 1
+Titanic$cSex[Titanic$Sex == "f"] <- 1
+Titanic$cSex[Titanic$Sex == "m"] <- 0
+Titanic$cSex <- cumsum(Titanic$cSex)
+Titanic$cSurvived <- cumsum(Titanic$Survived)
+Titanic$cAdult <- cumsum(as.numeric(Titanic$Adult))
+Titanic$cClass0 <- cumsum(Titanic$cClass0)
+Titanic$cClass1 <- cumsum(Titanic$cClass1)
+Titanic$cClass2 <- cumsum(Titanic$cClass2)
+Titanic$cClass3 <- cumsum(Titanic$cClass3)
+```
+
+***Guardem el nou dataframe***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+write.csv(Titanic,"~/Desktop/data_science/dades/neteja/Titanic.csv")
+```
+
+***Agafem les variables amb les que farem l'estudi***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+estudi <- c("Adult", "Class", "Sex", "Survived")
+Titanic_S <- Titanic[estudi]
+#Convertim les variables en categóriques
+Titanic_S$Survived <- as.factor(Titanic_S$Survived)
+Titanic_S$Adult <- as.factor(Titanic_S$Adult)
+Titanic_S$Class <- as.factor(Titanic_S$Class)
+Titanic_S$Sex <- as.factor(Titanic_S$Sex)
+summary(Titanic_S)
+```
+
+***Estudi de correlació***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Convertim la variable Sex a numeric
+Titanic[estudi]$Sex[Titanic$Sex == "f"] <- 1
+Titanic[estudi]$Sex[Titanic$Sex == "m"] <- 0
+Titanic[estudi]$Sex <- as.numeric(Titanic[estudi]$Sex)
+Titanic[estudi]$Adult <- as.numeric(Titanic[estudi]$Adult)
+cor(Titanic[estudi])
+```
+
+La primer intenció era fer un estudi de regressió logística sobre la variable Survived, peró degut a la poca correlació entre les variables, només Sex te certa correlació amb Survived, optem per un altre enfocament.
+
+Utilitzarem les variables acumulatives creades anteriorment i farem un estudi de regressió lineal.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+cor(Titanic[c("cSurvived", "cSex", "cAdult", "cClass0", "cClass1", "cClass2", "cClass3")])
+```
+
+En aquest cas si que veiem correlació entre aquestes variables i seran les que utilitzarem per fer un estudi de regressió lineal.
+
+***Comprovació de la normalitat i homogeneïtat de la variància***
+
+***Homogeneitat de la variància***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+var.test(as.numeric(Titanic_S$Survived), as.numeric(Titanic_S$Adult))
+var.test(as.numeric(Titanic_S$Survived), as.numeric(Titanic_S$Class))
+var.test(as.numeric(Titanic_S$Survived), as.numeric(Titanic_S$Sex))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cAdult))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cClass0))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cClass1))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cClass2))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cClass3))
+var.test(as.numeric(Titanic$cSurvived), as.numeric(Titanic$cSex))
+```
+Els p-values són tots molt propers a 0 i menors que 0.05, per tant podem rebutjar la hipòtesis nul-la, per tant podem dir que les variàncies no són iguals i asssumim heterocedasticitat.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(nortest)
+ad.test(Titanic$cSurvived)
+ad.test(Titanic$cAdult)
+ad.test(Titanic$cSex)
+ad.test(Titanic$cClass0)
+ad.test(Titanic$cClass1)
+ad.test(Titanic$cClass2)
+ad.test(Titanic$cClass3)
+```
+Els p-values són tots molt propers a 0 i menors que 0.05, per tant podem rebutjar la hipòtesis nul-la, per tant podem dir que les distribucions no són normals.
+
+***Dividim en Train i Test***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Primer desordenem les dades per tal que les mostres de Test i Train siguin aleatòries
+set.seed(42)
+rows <- sample(nrow(Titanic_S))
+Titanic_S_R <- Titanic_S[rows, ]
+summary(Titanic_S_R)
+#Dividim entre les étiquetes i les variables predictores
+y <- Titanic_S_R[,4] 
+X <- Titanic_S_R[,1:3] 
+#Dividim entre Train i Test, dos terços Train 1 terç Test
+m <- nrow(Titanic_S_R)
+n <- 4*m/5
+trainX <- X[1:n,]
+trainy <- y[1:n]
+testX  <- X[n:m,]
+testy  <- y[n:m]
+nrow(Titanic_S_R)
+nrow(trainX)
+length(trainy)
+nrow(testX)
+length(testy)
+```
+
+***Arbre de decissió***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library('C50')
+tree_model <- C50::C5.0(trainX, trainy, rules=TRUE )
+summary(tree_model)
+```
+
+L'arbre de decissió classifica malament 366 casos un 21,8%.
+Poden extreure les següents regles de decisió:
+
+-Els homes moren en un 78,8%
+
+-La tripulació i la classe tercera moren en un 75%.
+
+-Les dones de primera i segona classe es salven en un 93,8%
+
+-Les dones adultes es salven en 75,8%
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+tree_model <- C50::C5.0(trainX, trainy)
+plot(tree_model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+predicted_model <- predict(tree_model, testX, type="class")
+print(sprintf("La precisió de l'arbre és: %.4f %%",100*sum(predicted_model == testy) / length(predicted_model)))
+mat_conf<-table(testy,Predicted=predicted_model)
+mat_conf
+```
+
+Hem vist que no hi ha cap regla que digui que els nens es salvin més que els adults, al contrari amb les dones es salven més les adultes.
+
+***Test d’hipòtesis de dues mostres independents sobre la mitjana***
+
+Test d’hipòtesis de dues mostres independents sobre la mitjana d'edat de els que es van salvar i els que no.
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Primer dividim la mostra en dues, segons es van salvar o no
+Safe <- subset(Titanic, Titanic$Survived == '1')
+Died <- subset(Titanic, Titanic$Survived == '0')
+#Fem un test per comprobar si les variàncies són iguals
+var.test(Safe$Age, Died$Age)
+```
+
+El p-value és menor a que 0.05, per tant podem rebutjar la hipòtesis nul-la, per tant podem dir que les variàncies no són iguals i asssumim heterocedasticitat.
+
+H0: Els no supervivents tenen igual edat que els supervivents.
+H1: Els no supervivents tenen més edat que els supervivents.
+
+És un test unilateral per la dreta.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+m1 <- mean(Safe$Age)
+m2 <- mean(Died$Age)
+m1
+m2
+t.test(Safe$Age,Died$Age,alternative="greater", var.equal=FALSE)
+```
+
+El p-value és 0.7078 molt més gran que 0,05 i no podem rebutjar la hipótesis nul-la.
+Per tant hem d'acceptar que les mitjanes d'edat són les mateixes, el que es correspon amb les mitjanes de la mostra.
+
+Per tant veiem que la mitjana d'edat dels supervivents és similar a la dels no supervivents.
+
+***Estudi de regressió lineal sobre variables acumulades***
+
+Anem ha estudiar la relació que hi ha entre el número acumulat de supervivents i el número acumulat segons sexe, classe i edat.
+Volem estudiar com es relacionen la variable acumulada cSurvived i la resta de variables acumulades a l'hora de ser bons predictors de la primara.
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cSex, data = Titanic)
+summary(model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cAdult, data = Titanic)
+summary(model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cClass0, data = Titanic)
+summary(model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cClass1, data = Titanic)
+summary(model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cClass2, data = Titanic)
+summary(model)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cClass3, data = Titanic)
+summary(model)
+```
+
+Observem que sexe i l'edat són molt bons predictors amb coeficients de determinació 0.9615 i 0.9635.
+D'altra banda les classes 0 (treballadors) i la classe 1 no ho són tant, tenen coeficienbts de determinació 0.5245 i 0.4784.
+Les classes 2 i 3 si que ho són, amb coeficients de determinació 0.7272 i 0.8497.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model = lm(cSurvived ~ cSex + cAdult + cClass0 + cClass1 + cClass2 + cClass3, data = Titanic)
+summary(model)
+```
+
+Amb totes aquest predictors hem construit un model molt bo amb un coeficient de determinació de 0.9996.
+
+***Representació gràfica***
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(grid)
+library(ggplot2)
+library(gridExtra)
+grid.newpage()
+plotbyClass<-ggplot(Titanic_S_R,aes(Class,fill=Survived))+geom_bar() +labs(x="Class", y="Passengers")+ guides(fill=guide_legend(title=""))+ scale_fill_manual(values=c("black","#008000"))+ggtitle("Survived by Class")
+plotbyAge<-ggplot(Titanic_S_R,aes(Adult,fill=Survived))+geom_bar() +labs(x="Age", y="Passengers")+ guides(fill=guide_legend(title=""))+ scale_fill_manual(values=c("black","#008000"))+ggtitle("Survived by Age")
+plotbySex<-ggplot(Titanic_S_R,aes(Sex,fill=Survived))+geom_bar() +labs(x="Sex", y="Passengers")+ guides(fill=guide_legend(title=""))+ scale_fill_manual(values=c("black","#008000"))+ggtitle("Survived by Sex")
+grid.arrange(plotbyClass,plotbyAge,plotbySex,ncol=2)
+```
