@@ -1,0 +1,251 @@
+---
+title: "Titanic gràfiques"
+author: "Antonio Nogueras i Alex Casanovas"
+date: "3/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+## 1. Descripció del dataset:
+### dades de Titanic tretes de la Wikipedia, incloent tripulació
+
+### 1.1 Carregar les dades i revisió general
+
+Carregar les dades amb read.csv del fitxer allTitanic.csv = netejat amb CleaningTitanic.ipynb d'all_Titanic.xlsx tret de Wikipedia
+
+```{r}
+allT = read.csv("UOC3/M2.951Tipologia/PRA2/Titanic/allTitanic.csv", header=T)
+head(allT,3)
+```
+
+Vegem la cua:
+
+```{r}
+tail(allT,3)
+```
+
+Estructura de les dades llegides:
+
+```{r cars}
+str(allT)
+```
+Resum i llistat de NA:
+```{r}
+# summary() diu si hi ha NA
+summary(allT)
+```
+
+Queden els de Lifeboat (1489) que són els ofegats, i els de Body (1919) que són els cossos no trobats + els salvats.
+
+### 1.2 Seleccionem columnes per l'anàlisi
+
+```{r}
+selT = allT %>%
+  select(Age,Boarded,Lifeboat,Sex,Class,Group,Survived)
+head(selT,3)
+```
+### 2. La neteja s'ha fet previament en Jupyter amb CleaningTitanic.ipynb inclos en ac-uoc de Github
+
+## 3. Els fets ('Titanic facts') en forma gràfica:
+
+### 3.1 Gràfiques de les variables: la numèrica Age
+
+Age, Group i Sex
+
+```{r}
+ggplot(selT, aes(x=Age,y=Group,col=Sex)) +
+  geom_boxplot() +
+  labs(title = 'Edats segons grups i sexe')
+# edat en funció del grup:
+
+# 1c0ser passatger de primera classe sense servent
+# 1c1ser passatger de primera classe amb 1 servent també en 1a
+# 1c2ser passatger de primera classe amb 2 servents també en 1a
+# 1classServ servent en 1a classe (secretary, valet, nurse,..)
+# 2class passatger de segona classe
+# 3class passatger de tercera classe
+# resta: tripulació (deck, marineria, engineering, tripulació a càrrec de les màquines,..
+```
+
+'Facts':Entre els tripulants, hi ha outliers que corresponen a personal experimentat, com el capità en officer, o els enginyers d'Enginnering;
+      entre els passatgers, en 2a classe i 3a classe, pels xiquets i hi ha gent molt més major que la mitjana.
+
+Age, Lifeboat i Sex
+
+```{r}
+ggplot(selT, aes(x=Age,y=Lifeboat,col=Sex)) +
+  geom_boxplot()+
+  labs(title = 'Edats segons bots salvavides i sexe')
+```
+
+Class, Age i Group
+```{r}
+ggplot(allT,aes(y=Class,x=Age,color=Group)) +
+  geom_boxplot() +
+  labs(title = 'Edats per classe i grup')
+```
+
+El gran nombre de outliers en el apartat sense nom són ofegats ('no boat')
+
+### 3.2 Gràfiques de les variables tipus factor
+
+Salvats, Lifeboat i Sex
+
+```{r}
+ggplot(data=selT, aes(y=Lifeboat, fill=Sex)) +
+  geom_bar() +
+  labs(title = 'Salvats segons bots salvavides i sexe; "no boat" = ofegats')
+```
+
+El tòpic de què es van salvar moltes dones en els bots per triatge no és evident: hi ha molta proporció d'homes als bots, i moltes dones ofegades.
+
+Salvats segons grups:
+
+```{r}
+ggplot(selT, aes(fill=Survived, y=Group)) +
+  geom_bar()+
+  labs(title = 'Salvats per grups')
+```
+
+La 3a i 2a classe, entre els passatgers, i tots els tripulants llevat de marineria i oficials són la majoria d'ofegats
+
+Salvats segons sexe:
+
+```{r}
+ggplot(selT, aes(y=Survived, fill=Sex)) +
+  geom_bar()+
+  labs(title = 'Salvats segons sexe')
+```
+
+Nens salvats segons sexe:
+
+```{r}
+nens=selT %>%
+  filter(Age<=15)
+ggplot(nens, aes(y=Survived, fill=Sex)) +
+  geom_bar()+
+  labs(title = 'Nens salvats segons sexe')
+```
+
+Un altre tòpic de triatge de nens gens clar: hi ha més nens morts que salvats. No va ser per igual en cada classe, quasi tots els nens ofegats van ser de la 3a classe, com podem veure en el següent gràfic:
+
+```{r}
+nens=allT %>%
+  filter(Age<=10)
+ggplot(nens, aes(fill=Survived, y=Group)) +
+  geom_bar() +
+  labs(title = 'Nens salvats segons Group')
+```
+
+Comprovem els salvats segons classe:
+
+```{r}
+ggplot(selT, aes(y=Survived, fill=as.factor(Class))) +
+  geom_bar()+
+  labs(title = 'Salvats segons classe, classe = 0 és tripulació')
+```
+
+La tripulació i els passatgers de 3a classe van ser els més afectats.
+
+### Regressió lineal sexe vs. salvats
+
+Una teoria estesa diu que les dones del Titanic es van salvar en una proporció molt superior als homes. També és cert que hi havia moltes menys dones que homes al Titanic.
+
+Individualment, cada salvat o ofegat es pot representar per un factor 0 o 1. Si sumem casos, obtenim una variable creixent numèrica.El mateix podem dir de Sex: en el fitxer representa per 0 una dona, per 1 un home, que sumats, ens donen el nombre de homes. El pendent es, per tant, la tasa de salvats dels homes
+
+Per veure com varia l'acumulat de les dos variables, i com el pendent ens dona la probabilitat mitjana de que es salve un home en el Titanic. primer creem estes variables: cSurvived i cSex:
+```{r}
+selTn = selT %>%
+  select(Sex, Class, Survived) %>%
+  mutate_if(is.factor, as.numeric) %>%
+  mutate(SexN = Sex - 1, SurvivedN=Survived-1) %>%
+  mutate(cSex  = cumsum(SexN), cSurvived = cumsum(SurvivedN))
+head(selTn, 3)
+```
+
+Representarem gràficament cSurvived vs. cSex:
+
+```{r}  
+ggplot(selTn, aes(x = cSex, y=cSurvived, color=Class)) +
+  geom_point() +
+  labs(x='Accumulats de sexe=0 f, sexe=1, m',y='Accumulats de salvats =1, TRUE, 0=FALSE' , title = 'Relació entre acumulats')
+
+```
+
+Ajustem una regressió lineal amb lm() a partir de la meitat, a fi de fer una mostra més representativa:
+
+```{r}
+selTn750 = selTn %>%
+  filter(cSex > 750)
+surv.fit = lm(cSurvived ~ cSex, data = selTn750)
+summary(surv.fit)
+```
+### El pendent 0,217 que s'obté és aproximadament la fracció del total d'homes que se salva. Adjusted R-squared:  0.9966
+
+De la taula de contingència, el valor és 20,6%:
+```{r}
+100*prop.table( table(allT$Sex, allT$Survived), margin=1)
+```
+
+## Salvats en xifres
+
+### Salvats per grups
+
+Salvats, en %, segons els grups:
+
+```{r}
+# % de salvats (Survived=True) en funció del grup:
+
+# 1c0ser passatger de primera classe sense servent
+# 1c1ser passatger de primera classe amb 1 servent també en 1a
+# 1c2ser passatger de primera classe amb 2 servents també en 1a
+# 1classServ servent en 1a classe (secretary, valet, nurse,..)
+# 2class passatger de segona classe
+# 3class passatger de tercera classe
+# resta: tripulació (deck, marineria, engineering, tripulació a càrrec de les màquines,..
+
+100*prop.table(table(allT$Group,allT$Survived),margin=1)
+```
+
+Els passatgers de 1a classe amb un servent són el grup que més es salva (78,57%), seguit pels mateixos servents acompanyants de 1a classe (70,73).
+
+El següent és la tripulació de 'deck', la marineria (69,49%). Després la 1a classe sense servents acompanyants (66,66%).
+
+En valor absolut, els salvats i ofegats (FALSE) són:
+
+```{r}
+table(allT$Group,allT$Survived)
+```
+
+### Salvats: distribució als bots
+
+Comprovem que plens anaven el bots (1 a 14 caben 65, 15 i 16, 40, els plegables A, B, C i D, 47):
+
+```{r}
+bots=allT %>%
+  group_by(Lifeboat) %>%
+  count(Survived) %>%
+  rename(n_by_boat=n)
+bots
+```
+
+Els 1489 són ofegats. Quin percentatge dels bots anava ple?
+
+La resposta és molt variable: l'1 anava al 27,7% mentre que el 15 sobrecarregat al 147,5%:
+
+```{r}
+bots$capacity=c(NA,rep(65,times=6),40,40,rep(65,times=8),rep(47,times=4))
+bots$percentFull=100*bots$n_by_boat/bots$capacity
+bots
+```
+### Al menys 3 bots anaven al 30%, savent que el nombre de bots era insuficient.
+
+
