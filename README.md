@@ -39,6 +39,13 @@ https://en.wikipedia.org/wiki/Crew_of_the_Titanic
 El fitxer resultant d'ajuntar per nosaltres 11 taules, all_Titanic.xlsx, ha sigut revisat amb Python en CleaningTitanic.ipynb, que adjuntem.
 Qualsevol imprecisió resultant pot ser deguda a error nostre, malgrat que hem procurat ser totalment respectuosos amb l'original.
 
+Presentem 2 versions, l'estesa i la reduïda. Corresponen a usar més columnes i realitzar més preguntes, en l'estesa, o reduir-los a 3 variables d'entrada i una de sortida: Survived.
+
+L'estesa s'havia fet llarga, 633 línies, i havíem considerat dividir-ho en 3 etapes: condicionament de les dades, taules i estadístiques i graficas: d'aquesta etapa correspon Titanic-gràfiques.html . Finalment ho hem deixat com està.
+
+De la variant ‘estesa’ són tots els fitxers de nom allTitanic o all_Titanic, com allTitanic.pdf . De la ‘reduïda’ són simplement Titanic, com Titanic.rmd .
+
+
 
 - Análisis de los datos del viaje inaugural del Titanic
 
@@ -76,6 +83,13 @@ https://en.wikipedia.org/wiki/crew_of_the_titanic
 
 El fichero resultante de juntar por nosotros 11 tablas de Excel extraídas de la Wikipedia, all_Titanic.xlsx, ha sido revisado en CleaningTitanic.ipynb, que adjuntamos. Cualquier imprecisión resultante puede ser debida a error nuestro, a pesar de que hemos procurado ser totalmente respetuosos con el original.
 
+Presentamos 2 versiones, la extendida y la reducida. Corresponden a usar más columnas y realizar más preguntas, en la extendida, o reducirlos a 3 variables de entrada y una de salida: Survived.
+
+La extendida se había hecho larga, 633 líneas, y habíamos considerado dividirlo en 3 etapas: acondicionamiento de los datos, tablas y estadísticas y graficas: de esa etapa corresponde Titanic-gràfiques.html . Finalmente lo hemos dejado como está.
+
+De la variante ‘extendida’ son todos los ficheros de nombre allTitanic o all_Titanic, como allTitanic.pdf . De la ‘reducida’ son simplemente Titanic, como Titanic.rmd .
+
+
 
 
 - Data Analisis based on Wikipedia Titanic Data 
@@ -102,6 +116,7 @@ The boats, although insufficient, were not full crowded: 28 people carried the f
 
 The designer was on board, and he had to know that with six compartments flooded, the Titanic had no salvation: the maximum was four. They acted as if, in spite of evidence, it was not going to sink. Did they take advantage of the two hours, 40 minutes it took to do so?
 
+
 Many of the passengers on the lower decks were trapped with watertight gates closed to contain the flooding. This fact was useless because six compartments were flooded and it was going to sink in any case, and because the Titanic broke down the midship, and the sinking was instantaneous.
 
 The goal is to analyze data and going further on the 'Titanic facts'.
@@ -113,3 +128,9 @@ https://en.wikipedia.org/wiki/passengers_of_the_titanic
 https://en.wikipedia.org/wiki/crew_of_the_titanic
 
 The file resulting from joining 11 Excel tables extracted from Wikipedia, the all_Titanic.xlsx, has been revised by CleaningTitanic.ipynb, which we attach. Any resulting inaccuracies may be due to error on our part, although we have tried to be extremly respectful to the original data.
+
+We present here two versions, the extended and the reduced one. They correspond to using more columns and asking more questions, in the extended version, or reducing them to three input variables and one output variable: Survived.
+
+The extended version had become long, 633 lines, and we had considered dividing it into 3 stages: data conditioning, tables and statistics, and graphs: Titanic-gràfiques.html corresponds to this stage. Finally, we have left it as it is.
+
+The 'extended' variant includes all the files named allTitanic or all_Titanic, such as allTitanic.pdf . Of the 'reduced' variant they are simply Titanic, like Titanic.rmd .
