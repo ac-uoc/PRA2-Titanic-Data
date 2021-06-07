@@ -41,7 +41,7 @@ Qualsevol imprecisió resultant pot ser deguda a error nostre, malgrat que hem p
 
 Presentem 2 versions, l'estesa i la reduïda. Corresponen a usar més columnes i realitzar més preguntes, en l'estesa, o reduir-los a 3 variables d'entrada i una de sortida: Survived.
 
-L'estesa s'havia fet llarga, 633 línies, i havíem considerat dividir-ho en 3 etapes: condicionament de les dades, taules i estadístiques i graficas: d'aquesta etapa correspon Titanic-gràfiques.html . Finalment ho hem deixat com està.
+L'estesa s'havia fet llarga, 633 línies, i havíem considerat dividir-ho en 3 etapes: condicionament de les dades, taules i estadístiques i gràfiques: d'aquesta etapa correspon Titanic-gràfiques.html . Finalment ho hem deixat com està.
 
 De la variant ‘estesa’ són tots els fitxers de nom allTitanic o all_Titanic, com allTitanic.pdf . De la ‘reduïda’ són simplement Titanic, com Titanic.rmd .
 
@@ -51,7 +51,7 @@ De la variant ‘estesa’ són tots els fitxers de nom allTitanic o all_Titanic
 
 
 
-El Titanic quería ser una demostración extrema de la técnica y del lujo, que por eso tiene tanto de significado el hundimiento del barco en su primer viaje con pasajeros. Llevaba tanta gente de la alta sociedad, que el viaje era un hecho social. Tanto es así que algunos como Marconi sacaron el billete de este primer viaje aunque finalmente su agenda no los permitió abordar al Titanic.
+El Titanic quería ser una demostración extrema de la técnica y del lujo, que por eso tiene tanto significado el hundimiento del barco en su primer viaje con pasajeros. Llevaba tanta gente de la alta sociedad, que el viaje era un hecho social. Tanto es así que algunos como Marconi sacaron el billete de este primer viaje aunque finalmente su agenda no los permitió abordar al Titanic.
 
 Como al reciente caso del Costa Concordia, puede ser que confiados por su superioridad técnica, los oficiales no estuvieron atentos a las incidencias. Por ejemplo,
 
