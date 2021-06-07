@@ -36,7 +36,7 @@ https://en.wikipedia.org/wiki/Passengers_of_the_Titanic
 
 https://en.wikipedia.org/wiki/Crew_of_the_Titanic
 
-El fitxer resultant d'ajuntar per nosaltres 11 taules, all_Titanic.xlsx, ha sigut revisat amb Python en CleaningTitanic.ipynb, que adjuntem.
+El fitxer all_Titanic.xlsx resulta d'ajuntar per nosaltres 11 taules d'Excel de la Wikipedia. La versió csv deriva d'all_Titanic.xlsx
 Qualsevol imprecisió resultant pot ser deguda a error nostre, malgrat que hem procurat ser totalment respectuosos amb l'original.
 
 Presentem 2 versions, l'estesa i la reduïda. Corresponen a usar més columnes i realitzar més preguntes, en l'estesa, o reduir-los a 3 variables d'entrada i una de sortida: Survived.
@@ -81,7 +81,8 @@ https://en.wikipedia.org/wiki/passengers_of_the_titanic
 
 https://en.wikipedia.org/wiki/crew_of_the_titanic
 
-El fichero resultante de juntar por nosotros 11 tablas de Excel extraídas de la Wikipedia, all_Titanic.xlsx, ha sido revisado en CleaningTitanic.ipynb, que adjuntamos. Cualquier imprecisión resultante puede ser debida a error nuestro, a pesar de que hemos procurado ser totalmente respetuosos con el original.
+El fichero all_Titanic.xlsx resulta de juntar por nosotros 11 tablas de Excel de la Wikipedia. La versión csv deriva de all_Titanic.xlsx
+Cualquier imprecisión resultante puede ser debida a error nuestro, a pesar de que hemos procurado ser totalmente respetuosos con el original.
 
 Presentamos 2 versiones, la extendida y la reducida. Corresponden a usar más columnas y realizar más preguntas, en la extendida, o reducirlos a 3 variables de entrada y una de salida: Survived.
 
@@ -127,7 +128,8 @@ https://en.wikipedia.org/wiki/passengers_of_the_titanic
 
 https://en.wikipedia.org/wiki/crew_of_the_titanic
 
-The file resulting from joining 11 Excel tables extracted from Wikipedia, the all_Titanic.xlsx, has been revised by CleaningTitanic.ipynb, which we attach. Any resulting inaccuracies may be due to error on our part, although we have tried to be extremly respectful to the original data.
+The file all_Titanic.xlsx results from joining 11 Excel tables from Wikipedia. The csv version derives from all_Titanic.xlsx
+Any resulting inaccuracies may be due to error on our part, although we have tried to be extremly respectful to the original data.
 
 We present here two versions, the extended and the reduced one. They correspond to using more columns and asking more questions, in the extended version, or reducing them to three input variables and one output variable: Survived.
 
